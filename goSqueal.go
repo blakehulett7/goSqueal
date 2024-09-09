@@ -9,14 +9,14 @@ import (
 )
 
 func CheckForTable(tableName string) {
-	path := fmt.Sprintf("./database/%d.db", tableName)
-	_, err := os.Stat("./database/users.db")
+	path := fmt.Sprintf("./database/%v.db", tableName)
+	_, err := os.Stat(path)
 	if !errors.Is(err, fs.ErrNotExist) {
-		fmt.Println("Db exists")
+		fmt.Println(tableName, "table exists")
 		return
 	}
-	fmt.Println("Db does not exist, creating db")
-	command := "cat init/users.sql | sqlite3 database/users.db"
+	fmt.Println(tableName, "table does not exist, creating it now...")
+	command := fmt.Sprintf("cat init/%v.sql | sqlite3 database/%v.db", tableName, tableName)
 	err = exec.Command("bash", "-c", command).Run()
 	if err != nil {
 		fmt.Println(err)
