@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+var defaultOpenPermissions int = 0777
+
 func CheckForTable(tableName string) {
 	path := fmt.Sprintf("./database/%v.db", tableName)
 	_, err := os.Stat(path)
@@ -42,8 +44,18 @@ func GetTableFields(tableName string) []string {
 	return fieldsSlice
 }
 
-func CreateTableEntry(tableName string) {
+func CreateTableEntry(tableName string, params map[string]string) {
+	sqlQueryString := fmt.Sprintf("INSERT INTO %v VALUES", tableName)
+	fields := GetTableFields(tableName)
+	valuesSlice := []string{}
+	for _, field := range fields {
+		valuesSlice = append(valuesSlice, "'"+params[field]+"'")
+	}
+	values := strings.Join(valuesSlice, ",")
+	sqlQueryString = sqlQueryString + fmt.Sprintf("(%v)", values)
+	os.WriteFile("query.sql", []byte(sqlQueryString), 0777)
+	defer exec.Command("rm", "query.sql").Run()
 
+	command := fmt.Sprintf("cat query.sql | sqlite3 database/%v.db", tableName)
+	exec.Command("bash", "-c", command).Run()
 }
-
-var defaultOpenPermissions int = 0777
