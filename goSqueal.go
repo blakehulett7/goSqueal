@@ -57,5 +57,8 @@ func CreateTableEntry(tableName string, params map[string]string) {
 	defer exec.Command("rm", "query.sql").Run()
 
 	command := fmt.Sprintf("cat query.sql | sqlite3 database/%v.db", tableName)
-	exec.Command("bash", "-c", command).Run()
+	err := exec.Command("bash", "-c", command).Run()
+	if err != nil {
+		fmt.Println("error:", err)
+	}
 }
