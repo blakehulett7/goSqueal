@@ -24,9 +24,11 @@ func CheckForTable(tableName string) {
 }
 
 func GetTableFields(tableName string) {
-	directory := "./database"
-	path := directory + "/" + tableName + ".db"
-	fmt.Println(path)
+	sqlQueryString := fmt.Sprintf("SELECT name FROM pragma_table_info('%v')", tableName)
+	directory := "database"
+	extension := ".db"
+	path := directory + "/" + tableName + extension
+	fmt.Println(sqlQueryString, path)
 }
 
 func CreateTableEntry(tableName string) {
