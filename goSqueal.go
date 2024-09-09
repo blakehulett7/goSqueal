@@ -22,3 +22,13 @@ func CheckForTable(tableName string) {
 		fmt.Println(err)
 	}
 }
+
+func GetTableFields(tableName string) {
+	directory := "./database"
+	path := directory + "/" + tableName + ".db"
+	fmt.Println(path)
+}
+
+func CreateTableEntry(tableName string) {
+
+}
