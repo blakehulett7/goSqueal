@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func CheckForTable(tableName string) {
@@ -23,14 +24,26 @@ func CheckForTable(tableName string) {
 	}
 }
 
-func GetTableFields(tableName string) {
+func GetTableFields(tableName string) []string {
 	sqlQueryString := fmt.Sprintf("SELECT name FROM pragma_table_info('%v')", tableName)
-	directory := "database"
-	extension := ".db"
-	path := directory + "/" + tableName + extension
-	fmt.Println(sqlQueryString, path)
+	os.WriteFile("query.sql", []byte(sqlQueryString), fs.FileMode(defaultOpenPermissions))
+	defer exec.Command("rm", "query.sql").Run()
+
+	path := "database/" + tableName + ".db"
+
+	command := fmt.Sprintf("cat query.sql | sqlite3 %v", path)
+	fieldsData, err := exec.Command("bash", "-c", command).Output()
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fields := string(fieldsData)
+	fieldsSlice := strings.Split(fields, "\n")
+	fieldsSlice = fieldsSlice[:len(fieldsSlice)-1]
+	return fieldsSlice
 }
 
 func CreateTableEntry(tableName string) {
 
 }
+
+var defaultOpenPermissions int = 0777
