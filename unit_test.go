@@ -44,6 +44,15 @@ func TestCreateGetTableEntry(t *testing.T) {
 			},
 			want: map[string]string{"id": "1", "username": "bhulett", "refresh_token": "asdf"},
 		},
+		"badKey": {
+			tableName: "users_test",
+			params: map[string]string{
+				"id":            "2",
+				"name":          "bhulett",
+				"refresh_token": "jkl;",
+			},
+			want: map[string]string{"id": "2", "username": "", "refresh_token": "jkl;"},
+		},
 	}
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
