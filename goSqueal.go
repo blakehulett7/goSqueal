@@ -22,7 +22,7 @@ func CheckForTable(tableName string) {
 	command := fmt.Sprintf("cat init/%v.sql | sqlite3 database.db", tableName)
 	err = exec.Command("bash", "-c", command).Run()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("table creation error:", err)
 	}
 }
 
@@ -91,6 +91,6 @@ func CreateTableEntry(tableName string, params map[string]string) {
 	command := "cat query.sql | sqlite3 database.db"
 	err := exec.Command("bash", "-c", command).Run()
 	if err != nil {
-		fmt.Println("error:", err)
+		fmt.Println("create entry error:", err)
 	}
 }
