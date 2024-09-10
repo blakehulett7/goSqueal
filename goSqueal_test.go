@@ -1,3 +1,0 @@
-package goSqueal
-
-import "testing"
