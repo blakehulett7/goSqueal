@@ -11,15 +11,6 @@ import (
 
 var defaultOpenPermissions int = 0777
 
-func CheckForDatabase() {
-	_, err := os.Stat("./database.db")
-	if !errors.Is(err, fs.ErrNotExist) {
-		fmt.Println("database exists")
-		return
-	}
-	fmt.Println("database does not exist, creating it now...")
-}
-
 func CheckForTable(tableName string) {
 	path := fmt.Sprintf("./database/%v.db", tableName)
 	_, err := os.Stat(path)

@@ -7,7 +7,6 @@ import (
 )
 
 func TestGetTableFields(t *testing.T) {
-	CheckForDatabase()
 	defer exec.Command("rm", "database.db").Run()
 	CheckForTable("users_test")
 	defer DropTable("users_test")
@@ -28,7 +27,6 @@ func TestGetTableFields(t *testing.T) {
 }
 
 func TestCreateGetTableEntry(t *testing.T) {
-	CheckForDatabase()
 	defer exec.Command("rm", "database.db").Run()
 	CheckForTable("users_test")
 	defer DropTable("users_test")
