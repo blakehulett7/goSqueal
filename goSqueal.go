@@ -70,8 +70,11 @@ func GetTableEntry(tableName string, id string) map[string]string {
 		fmt.Println("HEY: fields and values slices are of different lengths!")
 	}
 	result := map[string]string{}
-	for i := 0; i < len(fields); i++ {
+	for i := 0; i < len(values); i++ {
 		result[fields[i]] = values[i]
+	}
+	if result[fields[0]] == "" {
+		return nil
 	}
 	return result
 }
@@ -92,5 +95,16 @@ func CreateTableEntry(tableName string, params map[string]string) {
 	err := exec.Command("bash", "-c", command).Run()
 	if err != nil {
 		fmt.Println("create entry error:", err)
+	}
+}
+
+func DeleteTableEntry(tableName string, id string) {
+	sqlQueryString := fmt.Sprintf("DELETE FROM %v WHERE id = '%v';", tableName, id)
+	os.WriteFile("query.sql", []byte(sqlQueryString), fs.FileMode(defaultOpenPermissions))
+	defer exec.Command("rm", "query.sql").Run()
+	command := "cat query.sql | sqlite3 database.db"
+	err := exec.Command("bash", "-c", command).Run()
+	if err != nil {
+		fmt.Println("delete entry error:", err)
 	}
 }

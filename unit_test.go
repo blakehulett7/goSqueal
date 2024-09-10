@@ -64,3 +64,30 @@ func TestCreateGetTableEntry(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteEntry(t *testing.T) {
+	defer exec.Command("rm", "database.db").Run()
+	CheckForTable("users_test")
+	defer DropTable("users_test")
+	tests := map[string]struct {
+		tableName string
+		id        string
+		want      map[string]string
+	}{
+		"simple": {
+			"users_test",
+			"1",
+			nil,
+		},
+	}
+	CreateTableEntry("users_test", map[string]string{"id": "1", "username": "bhulett", "refresh_token": "asdf"})
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			DeleteTableEntry(test.tableName, test.id)
+			got := GetTableEntry("users_test", "1")
+			if !reflect.DeepEqual(got, test.want) {
+				t.Fatalf("test failed: wanted %v, got: %v", test.want, got)
+			}
+		})
+	}
+}
