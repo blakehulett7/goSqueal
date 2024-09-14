@@ -100,3 +100,20 @@ func DeleteTableEntry(tableName string, id string) {
 		fmt.Println("delete entry error:", err)
 	}
 }
+
+func ParamExistsInTable(tableName, field, param string) bool {
+	sqlQueryString := fmt.Sprintf("SELECT count(*) FROM %v WHERE %v = '%v';", tableName, field, param) //only works for TEXT columns
+	os.WriteFile("query.sql", []byte(sqlQueryString), fs.FileMode(defaultOpenPermissions))
+	defer exec.Command("rm", "query.sql").Run()
+	command := "cat query.sql | sqlite3 database.db"
+	entryData, err := exec.Command("bash", "-c", command).Output()
+	if err != nil {
+		fmt.Println("get table entry error:", err)
+	}
+	entry := string(entryData)
+	entry = strings.ReplaceAll(entry, "\n", "")
+	if entry == "0" {
+		return false
+	}
+	return true
+}

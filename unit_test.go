@@ -91,3 +91,37 @@ func TestDeleteEntry(t *testing.T) {
 		})
 	}
 }
+
+func TestParamExistsInTable(t *testing.T) {
+	defer exec.Command("rm", "database.db").Run()
+	CheckForTable("users_test")
+	defer DropTable("users_test")
+	tests := map[string]struct {
+		tableName string
+		field     string
+		param     string
+		want      bool
+	}{
+		"param is there": {
+			"users_test",
+			"username",
+			"bhulett",
+			true,
+		},
+		"param not there": {
+			"users_test",
+			"username",
+			"blakers",
+			false,
+		},
+	}
+	CreateTableEntry("users_test", map[string]string{"id": "1", "username": "bhulett", "refresh_token": "asdf"})
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := ParamExistsInTable(test.tableName, test.field, test.param)
+			if got != test.want {
+				t.Fatalf("param's existence is inaccurately reported")
+			}
+		})
+	}
+}
