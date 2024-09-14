@@ -1,7 +1,6 @@
 package goSqueal
 
 import (
-	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -12,15 +11,8 @@ import (
 var defaultOpenPermissions int = 0777
 
 func CheckForTable(tableName string) {
-	path := fmt.Sprintf("./database/%v.db", tableName)
-	_, err := os.Stat(path)
-	if !errors.Is(err, fs.ErrNotExist) {
-		fmt.Println(tableName, "table exists")
-		return
-	}
-	fmt.Println(tableName, "table does not exist, creating it now...")
 	command := fmt.Sprintf("cat init/%v.sql | sqlite3 database.db", tableName)
-	err = exec.Command("bash", "-c", command).Run()
+	err := exec.Command("bash", "-c", command).Run()
 	if err != nil {
 		fmt.Println("table creation error:", err)
 	}
